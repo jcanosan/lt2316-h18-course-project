@@ -20,7 +20,10 @@ from keras.callbacks import ModelCheckpoint, Callback
 
 
 def chunks(l, n):
-    """Yield successive n-sized chunks from a list (l)."""
+    """
+    Yield successive n-sized chunks from a list. Based on the function in:
+    https://stackoverflow.com/questions/312443/how-do-you-split-a-list-into-evenly-sized-chunks
+    """
     for i in range(0, len(l), n):
         yield l[i:i + n]
 
@@ -29,11 +32,11 @@ def load_tokenize_split():
     """
     Loads the data from the csv file, takes the needed columns and builds two
     parallel lists with them.
-    Tokenizes, filters punctuation and one-word sentences and splits into
-    chunks of twenty words with their respective genres in a tuple
+    Tokenizes, filters punctuation and one-word and empty sentences and splits
+    into chunks of 50 words with their respective genres in a tuple
     ([chunk], [genres]).
     Randomizes the list, builds train, validation and test splits and saves them
-    into a pickle file.
+    and a sorted list with all the unique genres into a pickle file.
     """
     csv_file = pd.read_csv('dataset/AllMoviesDetailsCleaned.csv', sep=';')
     # Choose the genres and synopses columns, drop rows with at least one empty
@@ -193,7 +196,10 @@ def prepare_output_categories(syn_gen, all_genres):
 
 
 class TimeHistory(Callback):
-    """Calculates the time per epoch when training."""
+    """
+    Calculates the time per epoch when training. Based on the class in:
+    https://stackoverflow.com/questions/43178668/record-the-computation-time-for-each-epoch-in-keras-during-model-fit
+    """
     def on_train_begin(self, logs={}):
         self.times = []
 
@@ -315,7 +321,7 @@ def train_cnn_model(input1, output1, val_input1, val_output1, word_index):
 
     embedding_layer = glove_embedding_layer(word_index, input1.shape[1])
 
-    # Tree 1
+    # Architecture 1
     input_layer = Input(shape=(input1.shape[1],))
     emb_layer = embedding_layer(input_layer)
     cov1_layer = Conv1D(128, 3, activation='relu')(emb_layer)
@@ -328,7 +334,7 @@ def train_cnn_model(input1, output1, val_input1, val_output1, word_index):
     dense2_layer = Dense(output1.shape[1])(dense1_layer)
     cats_sigmoid_layer = Activation('sigmoid')(dense2_layer)
 
-    # Tree 2
+    # Architecture 2
     # input_layer = Input(shape=(input1.shape[1],))
     # emb_layer = embedding_layer(input_layer)
     # cov1_layer = Conv1D(256, 3, activation='relu')(emb_layer)

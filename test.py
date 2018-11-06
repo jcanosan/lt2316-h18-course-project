@@ -2,7 +2,7 @@
 # This is the script to test and evaluate a models for text classification for
 # the AllMoviesDetailsCleaned.csv dataset.
 
-
+# Since it is running in the server, the matplotlib.use('Agg') is needed
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
